@@ -2,10 +2,12 @@ package classifierfx
 
 import (
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier/adult/adultfx"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/asynq/consumer"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/asynq/producer"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/asynq/publisher"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/music/musicfx"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/adult"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/music"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/video"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/video/videofx"
@@ -21,9 +23,11 @@ func New() fx.Option {
 			producer.New,
 			publisher.New,
 			video.New,
+			adult.New,
 			music.New,
 		),
 		videofx.New(),
+		adultfx.New(),
 		musicfx.New(),
 	)
 }
