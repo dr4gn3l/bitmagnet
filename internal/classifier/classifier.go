@@ -4,44 +4,20 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver"
+	"github.com/bitmagnet-io/bitmagnet/internal/database/dao"
 	"github.com/bitmagnet-io/bitmagnet/internal/database/persistence"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"github.com/bitmagnet-io/bitmagnet/internal/protocol"
-	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
-
-type Params struct {
-	fx.In
-	Persistence persistence.Persistence
-	Resolver    resolver.RootResolver
-	Logger      *zap.SugaredLogger
-}
-
-type Result struct {
-	fx.Out
-	Classifier Classifier
-}
 
 type Classifier interface {
 	Classify(ctx context.Context, infoHashes ...protocol.ID) error
 }
 
-func New(p Params) (Result, error) {
-	return Result{
-		Classifier: classifier{
-			p.Persistence,
-			p.Resolver,
-			p.Logger,
-		},
-	}, nil
-}
-
 type classifier struct {
-	p persistence.Persistence
-	r resolver.RootResolver
-	l *zap.SugaredLogger
+	resolver    Resolver
+	dao         *dao.Query
+	persistence persistence.Persistence
 }
 
 type MissingHashesError struct {
@@ -53,7 +29,7 @@ func (e MissingHashesError) Error() string {
 }
 
 func (c classifier) Classify(ctx context.Context, infoHashes ...protocol.ID) error {
-	torrents, missingHashes, findErr := c.p.GetTorrents(ctx, infoHashes...)
+	torrents, missingHashes, findErr := c.persistence.GetTorrents(ctx, infoHashes...)
 	if findErr != nil {
 		return findErr
 	}
@@ -75,9 +51,9 @@ func (c classifier) Classify(ctx context.Context, infoHashes ...protocol.ID) err
 		}
 		// c.l.Infof(torrent.Name)
 		// This line call the Resolve in the file resolver/resolve.go which will loop over the subresolver sorted by priority
-		r, resolveErr := c.r.Resolve(ctx, torrentContent)
+		r, resolveErr := c.resolver.Resolve(ctx, torrentContent)
 		if resolveErr != nil {
-			if errors.Is(resolveErr, resolver.ErrNoMatch) {
+			if errors.Is(resolveErr, ErrNoMatch) {
 				continue
 			}
 			return resolveErr
@@ -85,7 +61,7 @@ func (c classifier) Classify(ctx context.Context, infoHashes ...protocol.ID) err
 		r.Torrent = model.Torrent{}
 		resolved = append(resolved, r)
 	}
-	if resolveErr := c.r.Persist(ctx, resolved...); resolveErr != nil {
+	if resolveErr := c.Persist(ctx, resolved...); resolveErr != nil {
 		return resolveErr
 	}
 	if len(missingHashes) > 0 {

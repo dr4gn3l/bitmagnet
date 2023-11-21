@@ -9,7 +9,7 @@ import (
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/music/musicfx"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/adult"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/music"
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/video"
+	// "github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver/video"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/video/videofx"
 	"go.uber.org/fx"
 )
@@ -22,7 +22,7 @@ func New() fx.Option {
 			consumer.New,
 			producer.New,
 			publisher.New,
-			video.New,
+			// video.New,
 			adult.New,
 			music.New,
 		),

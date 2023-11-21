@@ -3,7 +3,7 @@ package adult
 import (
 	"strings"
 
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 )
 
