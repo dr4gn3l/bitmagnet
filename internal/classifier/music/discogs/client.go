@@ -2,7 +2,7 @@ package discogs
 
 import (
 	"errors"
-	"github.com/bitmagnet-io/bitmagnet/internal/database/persistence"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/database/search"
 	discogs "github.com/irlndts/go-discogs"
 	"go.uber.org/fx"
@@ -11,10 +11,9 @@ import (
 
 type Params struct {
 	fx.In
-	Config      Config
-	Logger      *zap.SugaredLogger
-	Search      search.Search
-	Persistence persistence.Persistence
+	Config Config
+	Logger *zap.SugaredLogger
+	Search search.Search
 }
 
 type Result struct {
@@ -44,7 +43,6 @@ func New(p Params) (r Result, err error) {
 
 		r.Client = &client{
 			c: clientDiscogs,
-			p: p.Persistence,
 			s: p.Search,
 		}
 		r.DiscogsClient = clientDiscogs
@@ -55,7 +53,6 @@ func New(p Params) (r Result, err error) {
 type client struct {
 	c discogs.Discogs
 	s search.Search
-	p persistence.Persistence
 }
 
 const SourceMDiscogs = "discogs"

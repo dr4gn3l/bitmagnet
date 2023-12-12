@@ -2,8 +2,8 @@ package tpdb
 
 import (
 	"errors"
-	"git.sr.ht/~dragnel/go-tpdb"
-	"github.com/bitmagnet-io/bitmagnet/internal/database/persistence"
+
+	porndb "git.sr.ht/~dragnel/go-tpdb"
 	"github.com/bitmagnet-io/bitmagnet/internal/database/search"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -11,10 +11,9 @@ import (
 
 type Params struct {
 	fx.In
-	Config      Config
-	Logger      *zap.SugaredLogger
-	Search      search.Search
-	Persistence persistence.Persistence
+	Config Config
+	Logger *zap.SugaredLogger
+	Search search.Search
 }
 
 type Result struct {
@@ -39,7 +38,6 @@ func New(p Params) (r Result, err error) {
 	c := porndb.NewClient(p.Config.ApiKey)
 	r.Client = &client{
 		c: c,
-		p: p.Persistence,
 		s: p.Search,
 	}
 	r.TpdbClient = c
@@ -49,7 +47,6 @@ func New(p Params) (r Result, err error) {
 type client struct {
 	c *porndb.PorndbClient
 	s search.Search
-	p persistence.Persistence
 }
 
 const SourceTpdb = "tpdb"
