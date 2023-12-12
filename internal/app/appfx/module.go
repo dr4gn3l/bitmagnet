@@ -1,6 +1,7 @@
 package appfx
 
 import (
+	"github.com/bitmagnet-io/bitmagnet/internal/app/cmd/reclassifycmd"
 	"github.com/bitmagnet-io/bitmagnet/internal/app/cmd/searchcmd"
 	"github.com/bitmagnet-io/bitmagnet/internal/app/cmd/torrentcmd"
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/app/boilerplateappfx"
@@ -43,6 +44,7 @@ func New() fx.Option {
 		fx.Provide(
 			searchcmd.New,
 			torrentcmd.New,
+			reclassifycmd.New,
 		),
 		fx.Provide(webui.New),
 		fx.Decorate(migrations.NewDecorator),

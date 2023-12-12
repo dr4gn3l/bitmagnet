@@ -9,7 +9,7 @@ import (
 
 func PreEnrich(input model.TorrentContent) (model.TorrentContent, error) {
 	if !strings.Contains(strings.ToLower(input.Title), "xxx") {
-		return model.TorrentContent{}, resolver.ErrNoMatch
+		return model.TorrentContent{}, classifier.ErrNoMatch
 	}
 
 	titleLower := strings.ToLower(input.Title)

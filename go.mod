@@ -3,7 +3,7 @@ module github.com/bitmagnet-io/bitmagnet
 go 1.21.3
 
 require (
-	git.sr.ht/~dragnel/go-tpdb v0.0.3
+	git.sr.ht/~dragnel/go-tpdb v0.0.11
 	github.com/99designs/gqlgen v0.17.40
 	github.com/abice/go-enum v0.5.8
 	github.com/adrg/xdg v0.4.0
@@ -17,6 +17,7 @@ require (
 	github.com/frankban/quicktest v1.14.6
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-playground/validator/v10 v10.16.0
+	github.com/gosuri/uiprogress v0.0.1
 	github.com/grafana/pyroscope-go/godeltaprof v0.1.4
 	github.com/hashicorp/golang-lru/v2 v2.0.7
 	github.com/hedhyw/rex v0.6.0
@@ -25,6 +26,7 @@ require (
 	github.com/hibiken/asynq/x v0.0.0-20230908153724-6a7bf2ceff1e
 	github.com/hibiken/asynqmon v0.7.2
 	github.com/iancoleman/strcase v0.3.0
+	github.com/irlndts/go-discogs v0.3.6
 	github.com/jedib0t/go-pretty/v6 v6.4.9
 	github.com/joho/godotenv v1.5.1
 	github.com/mgdigital/gorm-cache/v2 v2.0.0-20230912113927-f2a8dd92a386
@@ -90,11 +92,11 @@ require (
 	github.com/google/uuid v1.4.0 // indirect
 	github.com/gorilla/mux v1.8.0 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
+	github.com/gosuri/uilive v0.0.4 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/huandu/xstrings v1.4.0 // indirect
 	github.com/imdario/mergo v0.3.16 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
-	github.com/irlndts/go-discogs v0.3.6 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.5.0 // indirect

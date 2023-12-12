@@ -2,12 +2,13 @@ package database
 
 import (
 	"database/sql"
+	"time"
+
 	gorm2 "github.com/bitmagnet-io/bitmagnet/internal/database/gorm"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"gorm.io/gorm"
 	gormlogger "gorm.io/gorm/logger"
-	"time"
 )
 
 type Params struct {
@@ -27,8 +28,9 @@ func New(p Params) (r Result, err error) {
 	loggerResult, loggerErr := gorm2.New(gorm2.Params{
 		ZapLogger: p.Logger,
 		Config: gorm2.Config{
-			LogLevel:      gormlogger.Info,
-			SlowThreshold: time.Second * 3,
+			LogLevel: gormlogger.Silent,
+			// LogLevel:      gormlogger.Info,
+			SlowThreshold: time.Second * 30,
 		},
 	})
 	if loggerErr != nil {

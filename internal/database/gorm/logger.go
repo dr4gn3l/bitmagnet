@@ -4,11 +4,12 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"time"
+
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	gormlogger "gorm.io/gorm/logger"
 	"gorm.io/gorm/utils"
-	"time"
 )
 
 type Config struct {
@@ -30,9 +31,11 @@ type Result struct {
 func New(p Params) (Result, error) {
 	return Result{
 		GormLogger: &customLogger{
-			logLevel:      p.Config.LogLevel,
-			slowThreshold: p.Config.SlowThreshold,
-			zap:           p.ZapLogger.Named("gorm"),
+			logLevel: gormlogger.Silent,
+			// logLevel:      p.Config.LogLevel,
+			slowThreshold: 10 * time.Second,
+			// slowThreshold: p.Config.SlowThreshold,
+			zap: p.ZapLogger.Named("gorm"),
 		},
 	}, nil
 }

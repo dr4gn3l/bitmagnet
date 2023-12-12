@@ -2,8 +2,8 @@ package adult
 
 import (
 	"context"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/adult/tpdb"
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"go.uber.org/fx"
 	"strings"
@@ -16,24 +16,24 @@ type Params struct {
 
 type Result struct {
 	fx.Out
-	Resolver resolver.SubResolver `group:"content_resolvers"`
+	Resolver classifier.SubResolver `group:"content_resolvers"`
 }
 
 func New(p Params) Result {
 	return Result{
 		Resolver: adultResolver{
-			config:     resolver.SubResolverConfig{Key: "adult", Priority: 2},
+			config:     classifier.SubResolverConfig{Key: "adult", Priority: 2},
 			tpdbClient: p.TpdbClient,
 		},
 	}
 }
 
 type adultResolver struct {
-	config     resolver.SubResolverConfig
+	config     classifier.SubResolverConfig
 	tpdbClient tpdb.Client
 }
 
-func (r adultResolver) Config() resolver.SubResolverConfig {
+func (r adultResolver) Config() classifier.SubResolverConfig {
 	return r.config
 }
 
@@ -55,11 +55,11 @@ func (r adultResolver) Resolve(ctx context.Context, content model.TorrentContent
 				content.SearchString = contentAdult.SearchString
 				return content, nil
 			}
-			return model.TorrentContent{}, resolver.ErrNoMatch
+			return model.TorrentContent{}, classifier.ErrNoMatch
 		}
 		content.ContentType.Valid = true
 		content.ContentType.ContentType = model.ContentTypeXxx
 		return content, nil
 	}
-	return model.TorrentContent{}, resolver.ErrNoMatch
+	return model.TorrentContent{}, classifier.ErrNoMatch
 }

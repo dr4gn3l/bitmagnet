@@ -3,8 +3,8 @@ package music
 import (
 	"context"
 	"fmt"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/music/discogs"
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"go.uber.org/fx"
 	"strings"
@@ -17,24 +17,24 @@ type Params struct {
 
 type Result struct {
 	fx.Out
-	Resolver resolver.SubResolver `group:"content_resolvers"`
+	Resolver classifier.SubResolver `group:"content_resolvers"`
 }
 
 func New(p Params) Result {
 	return Result{
 		Resolver: musicResolver{
-			config:        resolver.SubResolverConfig{Key: "music", Priority: 3},
+			config:        classifier.SubResolverConfig{Key: "music", Priority: 3},
 			discogsClient: p.DiscogsClient,
 		},
 	}
 }
 
 type musicResolver struct {
-	config        resolver.SubResolverConfig
+	config        classifier.SubResolverConfig
 	discogsClient discogs.Client
 }
 
-func (r musicResolver) Config() resolver.SubResolverConfig {
+func (r musicResolver) Config() classifier.SubResolverConfig {
 	return r.config
 }
 

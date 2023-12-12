@@ -1,7 +1,7 @@
 package music
 
 import (
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier/resolver"
+	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"github.com/bitmagnet-io/bitmagnet/internal/regex"
 	"github.com/hedhyw/rex/pkg/dialect"
@@ -118,7 +118,7 @@ func parseTitleYear(input string) (CoreInfo, string, error) {
 			}, input[len(match[0]):], nil
 		}
 	}
-	return CoreInfo{}, "", resolver.ErrNoMatch
+	return CoreInfo{}, "", classifier.ErrNoMatch
 }
 
 func parseTitle(input string) (CoreInfo, string, error) {
@@ -130,13 +130,13 @@ func parseTitle(input string) (CoreInfo, string, error) {
 			}, input[len(match[0]):], nil
 		}
 	}
-	return CoreInfo{}, "", resolver.ErrNoMatch
+	return CoreInfo{}, "", classifier.ErrNoMatch
 }
 
 func FindArtistDiscography(input string) (string, error) {
 	if match := artistDiscographyRegex.FindStringSubmatch(input); match != nil {
 		return match[1], nil
 	} else {
-		return "", resolver.ErrNoMatch
+		return "", classifier.ErrNoMatch
 	}
 }
