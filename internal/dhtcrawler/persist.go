@@ -20,7 +20,12 @@ func (c *crawler) runPersistTorrents(ctx context.Context) {
 			return
 		case is := <-c.persistTorrents.Out():
 			ts := make([]*model.Torrent, 0, len(is))
+			hashMap := make(map[protocol.ID]infoHashWithMetaInfo, len(is))
 			for _, i := range is {
+				if _, ok := hashMap[i.infoHash]; ok {
+					continue
+				}
+				hashMap[i.infoHash] = i
 				if t, err := createTorrentModel(i.infoHash, i.metaInfo, c.savePieces, c.saveFilesThreshold); err != nil {
 					c.logger.Errorf("error creating torrent model: %s", err.Error())
 				} else {
@@ -40,16 +45,26 @@ func (c *crawler) runPersistTorrents(ctx context.Context) {
 			} else {
 				c.persistedTotal.With(prometheus.Labels{"entity": "Torrent"}).Add(float64(len(ts)))
 				c.logger.Debugw("persisted torrents", "count", len(ts))
-				hashesToClassify := make([]protocol.ID, 0, len(ts))
+				hashesToClassify := make([]protocol.ID, 0, classifyBatchSize)
+				flushClassify := func() {
+					if len(hashesToClassify) == 0 {
+						return
+					}
+					if _, classifyErr := c.classifierPublisher.Publish(ctx, message.ClassifyTorrentPayload{
+						InfoHashes: hashesToClassify,
+					}); classifyErr != nil {
+						c.logger.Errorf("error publishing classify message: %s", classifyErr.Error())
+					}
+				}
 				for _, t := range ts {
 					hashesToClassify = append(hashesToClassify, t.InfoHash)
+					if len(hashesToClassify) == classifyBatchSize {
+						flushClassify()
+						hashesToClassify = make([]protocol.ID, 0, classifyBatchSize)
+					}
 				}
-				if _, classifyErr := c.classifierPublisher.Publish(ctx, message.ClassifyTorrentPayload{
-					InfoHashes: hashesToClassify,
-				}); classifyErr != nil {
-					c.logger.Errorf("error publishing classify message: %s", classifyErr.Error())
-				}
-				for _, i := range is {
+				flushClassify()
+				for _, i := range hashMap {
 					select {
 					case <-ctx.Done():
 						return
@@ -112,6 +127,8 @@ func createTorrentModel(
 	}, nil
 }
 
+const classifyBatchSize = 200
+
 // runPersistSources waits on the persistSources channel for scraped torrents, and persists sources
 // (which includes discovery date, seeders and leechers) to the database in batches.
 func (c *crawler) runPersistSources(ctx context.Context) {
@@ -121,7 +138,12 @@ func (c *crawler) runPersistSources(ctx context.Context) {
 			return
 		case scrapes := <-c.persistSources.Out():
 			srcs := make([]*model.TorrentsTorrentSource, 0, len(scrapes))
+			hashSet := make(map[protocol.ID]struct{}, len(scrapes))
 			for _, s := range scrapes {
+				if _, ok := hashSet[s.infoHash]; ok {
+					continue
+				}
+				hashSet[s.infoHash] = struct{}{}
 				if src, err := createTorrentSourceModel(s); err != nil {
 					c.logger.Errorf("error creating torrent source model: %s", err.Error())
 				} else {

@@ -2,8 +2,26 @@ package model
 
 import (
 	"github.com/bitmagnet-io/bitmagnet/internal/regex"
+	"github.com/facette/natsort"
 	"gorm.io/gorm"
+	"net/url"
+	"sort"
+	"strconv"
 )
+
+func (t *Torrent) AfterFind(tx *gorm.DB) error {
+	if t.Files != nil {
+		sort.Slice(t.Files, func(i, j int) bool {
+			return t.Files[i].Path < t.Files[j].Path
+		})
+	}
+	if t.Tags != nil {
+		sort.Slice(t.Tags, func(i, j int) bool {
+			return natsort.Compare(t.Tags[i].Name, t.Tags[j].Name)
+		})
+	}
+	return nil
+}
 
 func (t *Torrent) BeforeCreate(tx *gorm.DB) error {
 	if len(t.Contents) == 0 {
@@ -47,8 +65,10 @@ func (t Torrent) Leechers() NullUint {
 	return leechers
 }
 
-func (t Torrent) Magnet() string {
-	return "magnet:?xt=urn:btih:" + t.InfoHash.String()
+func (t Torrent) MagnetUri() string {
+	return "magnet:?xt=urn:btih:" + t.InfoHash.String() +
+		"&dn=" + url.QueryEscape(t.Name) +
+		"&xl=" + strconv.FormatUint(t.Size, 10)
 }
 
 // HasFilesInfo returns true if we know about the files in this torrent.
@@ -124,4 +144,12 @@ func (t Torrent) HasFileType(fts ...FileType) NullBool {
 		}
 	}
 	return NewNullBool(false)
+}
+
+func (t Torrent) TagNames() []string {
+	tagNames := make([]string, 0, len(t.Tags))
+	for _, tag := range t.Tags {
+		tagNames = append(tagNames, tag.Name)
+	}
+	return tagNames
 }

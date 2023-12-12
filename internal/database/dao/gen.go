@@ -17,6 +17,7 @@ import (
 
 var (
 	Q                        = new(Query)
+	BloomFilter              *bloomFilter
 	Content                  *content
 	ContentAttribute         *contentAttribute
 	ContentCollection        *contentCollection
@@ -26,11 +27,13 @@ var (
 	TorrentContent           *torrentContent
 	TorrentFile              *torrentFile
 	TorrentSource            *torrentSource
+	TorrentTag               *torrentTag
 	TorrentsTorrentSource    *torrentsTorrentSource
 )
 
 func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	*Q = *Use(db, opts...)
+	BloomFilter = &Q.BloomFilter
 	Content = &Q.Content
 	ContentAttribute = &Q.ContentAttribute
 	ContentCollection = &Q.ContentCollection
@@ -40,12 +43,14 @@ func SetDefault(db *gorm.DB, opts ...gen.DOOption) {
 	TorrentContent = &Q.TorrentContent
 	TorrentFile = &Q.TorrentFile
 	TorrentSource = &Q.TorrentSource
+	TorrentTag = &Q.TorrentTag
 	TorrentsTorrentSource = &Q.TorrentsTorrentSource
 }
 
 func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 	return &Query{
 		db:                       db,
+		BloomFilter:              newBloomFilter(db, opts...),
 		Content:                  newContent(db, opts...),
 		ContentAttribute:         newContentAttribute(db, opts...),
 		ContentCollection:        newContentCollection(db, opts...),
@@ -55,6 +60,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 		TorrentContent:           newTorrentContent(db, opts...),
 		TorrentFile:              newTorrentFile(db, opts...),
 		TorrentSource:            newTorrentSource(db, opts...),
+		TorrentTag:               newTorrentTag(db, opts...),
 		TorrentsTorrentSource:    newTorrentsTorrentSource(db, opts...),
 	}
 }
@@ -62,6 +68,7 @@ func Use(db *gorm.DB, opts ...gen.DOOption) *Query {
 type Query struct {
 	db *gorm.DB
 
+	BloomFilter              bloomFilter
 	Content                  content
 	ContentAttribute         contentAttribute
 	ContentCollection        contentCollection
@@ -71,6 +78,7 @@ type Query struct {
 	TorrentContent           torrentContent
 	TorrentFile              torrentFile
 	TorrentSource            torrentSource
+	TorrentTag               torrentTag
 	TorrentsTorrentSource    torrentsTorrentSource
 }
 
@@ -79,6 +87,7 @@ func (q *Query) Available() bool { return q.db != nil }
 func (q *Query) clone(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
+		BloomFilter:              q.BloomFilter.clone(db),
 		Content:                  q.Content.clone(db),
 		ContentAttribute:         q.ContentAttribute.clone(db),
 		ContentCollection:        q.ContentCollection.clone(db),
@@ -88,6 +97,7 @@ func (q *Query) clone(db *gorm.DB) *Query {
 		TorrentContent:           q.TorrentContent.clone(db),
 		TorrentFile:              q.TorrentFile.clone(db),
 		TorrentSource:            q.TorrentSource.clone(db),
+		TorrentTag:               q.TorrentTag.clone(db),
 		TorrentsTorrentSource:    q.TorrentsTorrentSource.clone(db),
 	}
 }
@@ -103,6 +113,7 @@ func (q *Query) WriteDB() *Query {
 func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 	return &Query{
 		db:                       db,
+		BloomFilter:              q.BloomFilter.replaceDB(db),
 		Content:                  q.Content.replaceDB(db),
 		ContentAttribute:         q.ContentAttribute.replaceDB(db),
 		ContentCollection:        q.ContentCollection.replaceDB(db),
@@ -112,11 +123,13 @@ func (q *Query) ReplaceDB(db *gorm.DB) *Query {
 		TorrentContent:           q.TorrentContent.replaceDB(db),
 		TorrentFile:              q.TorrentFile.replaceDB(db),
 		TorrentSource:            q.TorrentSource.replaceDB(db),
+		TorrentTag:               q.TorrentTag.replaceDB(db),
 		TorrentsTorrentSource:    q.TorrentsTorrentSource.replaceDB(db),
 	}
 }
 
 type queryCtx struct {
+	BloomFilter              IBloomFilterDo
 	Content                  IContentDo
 	ContentAttribute         IContentAttributeDo
 	ContentCollection        IContentCollectionDo
@@ -126,11 +139,13 @@ type queryCtx struct {
 	TorrentContent           ITorrentContentDo
 	TorrentFile              ITorrentFileDo
 	TorrentSource            ITorrentSourceDo
+	TorrentTag               ITorrentTagDo
 	TorrentsTorrentSource    ITorrentsTorrentSourceDo
 }
 
 func (q *Query) WithContext(ctx context.Context) *queryCtx {
 	return &queryCtx{
+		BloomFilter:              q.BloomFilter.WithContext(ctx),
 		Content:                  q.Content.WithContext(ctx),
 		ContentAttribute:         q.ContentAttribute.WithContext(ctx),
 		ContentCollection:        q.ContentCollection.WithContext(ctx),
@@ -140,6 +155,7 @@ func (q *Query) WithContext(ctx context.Context) *queryCtx {
 		TorrentContent:           q.TorrentContent.WithContext(ctx),
 		TorrentFile:              q.TorrentFile.WithContext(ctx),
 		TorrentSource:            q.TorrentSource.WithContext(ctx),
+		TorrentTag:               q.TorrentTag.WithContext(ctx),
 		TorrentsTorrentSource:    q.TorrentsTorrentSource.WithContext(ctx),
 	}
 }

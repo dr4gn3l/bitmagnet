@@ -18,8 +18,11 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { ClipboardModule } from "@angular/cdk/clipboard";
 import { MatSnackBarModule } from "@angular/material/snack-bar";
 import { MatRadioModule } from "@angular/material/radio";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatDividerModule } from "@angular/material/divider";
+import { MatCardModule } from "@angular/material/card";
 import { TorrentContentComponent } from "./torrent-content/torrent-content.component";
-import { TorrentContentService } from "./torrent-content/torrent-content.service";
 
 @NgModule({
   declarations: [TorrentContentComponent],
@@ -43,8 +46,11 @@ import { TorrentContentService } from "./torrent-content/torrent-content.service
     MatChipsModule,
     MatSnackBarModule,
     MatRadioModule,
+    MatAutocompleteModule,
+    MatTabsModule,
+    MatDividerModule,
+    MatCardModule,
   ],
   exports: [TorrentContentComponent],
-  providers: [TorrentContentService],
 })
 export class SearchModule {}
