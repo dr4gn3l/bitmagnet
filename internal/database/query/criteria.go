@@ -1,10 +1,11 @@
 package query
 
 import (
+	"strings"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/maps"
 	"github.com/bitmagnet-io/bitmagnet/internal/regex"
 	"gorm.io/gen/field"
-	"strings"
 )
 
 func Where(conditions ...Criteria) Option {
@@ -173,7 +174,6 @@ func queryStringCriteriaFromTokens(str string, tokens []string) Criteria {
 			Sql: strings.Join([]string{
 				ctx.TableName() + ".tsv @@ plainto_tsquery('simple', ?)",
 				ctx.TableName() + ".tsv @@ websearch_to_tsquery('simple', ?)",
-				ctx.TableName() + ".search_string LIKE ?",
 			}, " OR "),
 			Args: []interface{}{
 				strings.Join(tokens, " "),
