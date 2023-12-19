@@ -178,7 +178,6 @@ func queryStringCriteriaFromTokens(str string, tokens []string) Criteria {
 			Args: []interface{}{
 				strings.Join(tokens, " "),
 				strings.Join(tokens, " "),
-				"%" + strings.TrimSpace(str) + "%",
 			},
 		}, nil
 	})

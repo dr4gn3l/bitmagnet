@@ -11,10 +11,7 @@
           <mat-radio-button>
             <mat-icon fontSet="material-icons">emergency</mat-icon>All
           </mat-radio-button>
-          <mat-radio-button
-            *ngFor="let t of contentTypeEntries"
-            [value]="t.type"
-          >
+          <mat-radio-button *ngFor="let t of contentTypeEntries" [value]="t.type">
             <mat-icon>{{ t.icon }}</mat-icon>
             {{ t.plural }}
             <small>({{ contentTypeAgg(t.type)?.count ?? 0 | number }})</small>
@@ -23,36 +20,23 @@
       </section>
     </mat-expansion-panel>
     <ng-container *ngFor="let facet of facets">
-      <mat-expansion-panel
-        *ngIf="facet.isRelevant(contentType.value)"
-        [expanded]="facet.isActive()"
-        (opened)="facet.activate(); loadResult()"
-        (closed)="facet.deactivateAndReset(); loadResult()"
-      >
+      <mat-expansion-panel *ngIf="facet.isRelevant(contentType.value)" [expanded]="facet.isActive()"
+        (opened)="facet.activate(); loadResult()" (closed)="facet.deactivateAndReset(); loadResult()">
         <mat-expansion-panel-header>
-          <mat-panel-title
-            ><mat-icon>{{ facet.icon }}</mat-icon>
-            {{ facet.name }}</mat-panel-title
-          >
+          <mat-panel-title><mat-icon>{{ facet.icon }}</mat-icon>
+            {{ facet.name }}</mat-panel-title>
         </mat-expansion-panel-header>
         <section [class]="facet.isEmpty() ? 'empty' : 'active'">
-          <mat-checkbox
-            *ngFor="let r of facet.aggregations"
-            [checked]="facet.isEmpty() || facet.isSelected(r.value)"
-            [color]="'accent'"
-            (change)="
+          <mat-checkbox *ngFor="let r of facet.aggregations" [checked]="facet.isEmpty() || facet.isSelected(r.value)"
+            [color]="'accent'" (change)="
               $event.checked || facet.isEmpty()
                 ? facet.select(r.value)
                 : facet.deselect(r.value);
               loadResult()
-            "
-            [style.display]="'block'"
-          >
+            " [style.display]="'block'">
             {{ r.label }} <small>({{ r.count | number }})</small>
           </mat-checkbox>
-          <span *ngIf="!loading && !facet.aggregations?.length" class="empty"
-            >No aggregation results</span
-          >
+          <span *ngIf="!loading && !facet.aggregations?.length" class="empty">No aggregation results</span>
         </section>
       </mat-expansion-panel>
     </ng-container>
@@ -60,49 +44,28 @@
   <mat-drawer-content [style.z-index]="100" [style.overflow]="'visible'">
     <div class="results">
       <div class="search-form">
-        <mat-icon
-          fontSet="material-icons"
-          [class]="'toggle-drawer ' + (drawer.opened ? 'opened' : 'closed')"
-          (click)="drawer.toggle()"
-          >{{
-            drawer.opened ? "arrow_circle_left" : "arrow_circle_right"
-          }}</mat-icon
-        >
+        <mat-icon fontSet="material-icons" [class]="'toggle-drawer ' + (drawer.opened ? 'opened' : 'closed')"
+          (click)="drawer.toggle()">{{
+          drawer.opened ? "arrow_circle_left" : "arrow_circle_right"
+          }}</mat-icon>
         <mat-form-field class="field-search-query">
-          <input
-            matInput
-            placeholder="Search"
-            [formControl]="queryString"
-            (keyup.enter)="pageIndex = 0; loadResult()"
-          />
-          <button
-            *ngIf="queryString.value"
-            matSuffix
-            mat-icon-button
-            aria-label="Clear"
-            (click)="queryString.reset(); pageIndex = 0; loadResult()"
-          >
+          <input matInput placeholder="Search" [formControl]="queryString"
+            (keyup.enter)="pageIndex = 0; loadResult()" />
+          <button *ngIf="queryString.value" matSuffix mat-icon-button aria-label="Clear"
+            (click)="queryString.reset(); pageIndex = 0; loadResult()">
             <mat-icon>close</mat-icon>
           </button>
         </mat-form-field>
         <mat-form-field class="field-auto-refresh">
           <mat-label>Auto-refresh</mat-label>
           <mat-select [formControl]="autoRefresh" (valueChange)="loadResult()">
-            <mat-option
-              *ngFor="let interval of autoRefreshIntervals"
-              [value]="interval"
-            >
+            <mat-option *ngFor="let interval of autoRefreshIntervals" [value]="interval">
               {{ interval === 0 ? "Off" : interval + "s" }}
             </mat-option>
           </mat-select>
         </mat-form-field>
         <div class="button-refresh">
-          <button
-            mat-mini-fab
-            title="Refresh results"
-            color="primary"
-            (click)="loadResult(false)"
-          >
+          <button mat-mini-fab title="Refresh results" color="primary" (click)="loadResult(false)">
             <mat-icon>sync</mat-icon>
           </button>
         </div>
@@ -110,17 +73,9 @@
 
       <mat-divider></mat-divider>
 
-      <mat-tab-group
-        animationDuration="0"
-        class="tab-group-bulk-actions"
-        [selectedIndex]="selectedTabIndex"
-        (focusChange)="selectTab($event.index == 3 ? 0 : $event.index)"
-        [mat-stretch-tabs]="false"
-      >
-        <mat-tab
-          [aria-labelledby]="'hidden'"
-          class="bulk-tab-placeholder"
-        ></mat-tab>
+      <mat-tab-group animationDuration="0" class="tab-group-bulk-actions" [selectedIndex]="selectedTabIndex"
+        (focusChange)="selectTab($event.index == 3 ? 0 : $event.index)" [mat-stretch-tabs]="false">
+        <mat-tab [aria-labelledby]="'hidden'" class="bulk-tab-placeholder"></mat-tab>
 
         <mat-tab>
           <ng-template mat-tab-label>
@@ -131,71 +86,37 @@
           <mat-card>
             <mat-form-field class="form-edit-tags">
               <mat-chip-grid #chipGrid aria-label="Enter tags">
-                <mat-chip-row
-                  *ngFor="let tagName of editedTags; let j = index"
-                  [editable]="true"
-                  (edited)="renameTag(tagName, $event.value)"
-                  (removed)="deleteTag(tagName)"
-                  [aria-description]="'press enter to edit'"
-                >
+                <mat-chip-row *ngFor="let tagName of editedTags; let j = index" [editable]="true"
+                  (edited)="renameTag(tagName, $event.value)" (removed)="deleteTag(tagName)"
+                  [aria-description]="'press enter to edit'">
                   {{ tagName }}
                   <button matChipRemove [attr.aria-label]="'remove ' + tagName">
                     <mat-icon>cancel</mat-icon>
                   </button>
                 </mat-chip-row>
               </mat-chip-grid>
-              <input
-                placeholder="Tag..."
-                [formControl]="newTagCtrl"
-                [matAutocomplete]="auto"
-                [matChipInputFor]="chipGrid"
-                [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                (matChipInputTokenEnd)="$event.value && addTag($event.value)"
-                [value]="newTagCtrl.value"
-              />
-              <mat-autocomplete
-                #auto="matAutocomplete"
-                (optionSelected)="addTag($event.option.viewValue)"
-              >
-                <mat-option
-                  *ngFor="let tagName of suggestedTags"
-                  [value]="tagName"
-                  >{{ tagName }}</mat-option
-                >
+              <input placeholder="Tag..." [formControl]="newTagCtrl" [matAutocomplete]="auto"
+                [matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                (matChipInputTokenEnd)="$event.value && addTag($event.value)" [value]="newTagCtrl.value" />
+              <mat-autocomplete #auto="matAutocomplete" (optionSelected)="addTag($event.option.viewValue)">
+                <mat-option *ngFor="let tagName of suggestedTags" [value]="tagName">{{ tagName }}</mat-option>
               </mat-autocomplete>
             </mat-form-field>
             <mat-card-actions class="button-row">
-              <button
-                mat-stroked-button
-                color="primary"
-                [disabled]="!selectedItems.hasValue()"
-                (click)="setTags()"
-                title="Replace tags of the selected torrents"
-              >
+              <button mat-stroked-button color="primary" [disabled]="!selectedItems.hasValue()" (click)="setTags()"
+                title="Replace tags of the selected torrents">
                 Set tags
               </button>
-              <button
-                mat-stroked-button
-                color="primary"
-                [disabled]="
+              <button mat-stroked-button color="primary" [disabled]="
                   !selectedItems.hasValue() ||
                   (!editedTags.length && !newTagCtrl.value)
-                "
-                (click)="putTags()"
-                title="Add tags to the selected torrents"
-              >
+                " (click)="putTags()" title="Add tags to the selected torrents">
                 Put tags
               </button>
-              <button
-                mat-stroked-button
-                color="primary"
-                [disabled]="
+              <button mat-stroked-button color="primary" [disabled]="
                   !selectedItems.hasValue() ||
                   (!editedTags.length && !newTagCtrl.value)
-                "
-                (click)="deleteTags()"
-                title="Remove tags from the selected torrents"
-              >
+                " (click)="deleteTags()" title="Remove tags from the selected torrents">
                 Delete tags
               </button>
             </mat-card-actions>
@@ -211,20 +132,14 @@
           <mat-card>
             <mat-card-content>
               <p>
-                <strong
-                  >Are you sure you want to delete the selected
-                  torrents?</strong
-                >
+                <strong>Are you sure you want to delete the selected
+                  torrents?</strong>
                 <br />This action cannot be undone.
               </p>
             </mat-card-content>
             <mat-card-actions class="button-row">
-              <button
-                mat-stroked-button
-                color="warn"
-                [disabled]="!selectedItems.hasValue()"
-                (click)="deleteTorrents(selectedInfoHashes())"
-              >
+              <button mat-stroked-button color="warn" [disabled]="!selectedItems.hasValue()"
+                (click)="deleteTorrents(selectedInfoHashes())">
                 <mat-icon>delete_forever</mat-icon>Delete
               </button>
             </mat-card-actions>
@@ -241,62 +156,36 @@
       <mat-divider></mat-divider>
 
       <div class="progress-bar-container" style="height: 10px">
-        <mat-progress-bar
-          mode="indeterminate"
-          *ngIf="loading"
-        ></mat-progress-bar>
+        <mat-progress-bar mode="indeterminate" *ngIf="loading"></mat-progress-bar>
       </div>
-      <table
-        mat-table
-        [dataSource]="dataSource"
-        multiTemplateDataRows
-        class="table-results"
-      >
+      <table mat-table [dataSource]="dataSource" multiTemplateDataRows class="table-results">
         <!-- Checkbox Column -->
         <ng-container matColumnDef="select">
           <th mat-header-cell *matHeaderCellDef>
-            <mat-checkbox
-              (change)="toggleAllRows()"
-              [checked]="selectedItems.hasValue() && isAllSelected()"
-              [indeterminate]="selectedItems.hasValue() && !isAllSelected()"
-              [aria-label]="checkboxLabel()"
-            >
+            <mat-checkbox (change)="toggleAllRows()" [checked]="selectedItems.hasValue() && isAllSelected()"
+              [indeterminate]="selectedItems.hasValue() && !isAllSelected()" [aria-label]="checkboxLabel()">
             </mat-checkbox>
           </th>
           <td mat-cell *matCellDef="let row">
-            <mat-checkbox
-              (click)="$event.stopPropagation()"
-              (change)="$event ? selectedItems.toggle(row) : null"
-              [checked]="selectedItems.isSelected(row)"
-              [aria-label]="checkboxLabel(row)"
-            >
+            <mat-checkbox (click)="$event.stopPropagation()" (change)="$event ? selectedItems.toggle(row) : null"
+              [checked]="selectedItems.isSelected(row)" [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="summary">
           <th mat-header-cell *matHeaderCellDef>Summary</th>
-          <td
-            mat-cell
-            *matCellDef="let i"
-            (click)="expandedItem.toggle(i.id); $event.stopPropagation()"
-          >
-            <mat-icon
-              [attr.title]="
+          <td mat-cell *matCellDef="let i" (click)="expandedItem.toggle(i.id); $event.stopPropagation()">
+            <mat-icon [attr.title]="
                 contentTypeInfo(item(i).contentType)?.singular ?? 'Unknown'
-              "
-              >{{
-                contentTypeInfo(item(i).contentType)?.icon ?? "question_mark"
-              }}</mat-icon
-            >
+              ">{{
+              contentTypeInfo(item(i).contentType)?.icon ?? "question_mark"
+              }}</mat-icon>
             <span class="title"><span *ngIf="getAttribute(item(i), 'site', 'tpdb') as site ">
                 {{ site }} - </span>
               {{ item(i).title }}</span>
             <mat-chip-set>
-              <mat-chip
-                *ngFor="let tagName of item(i).torrent.tagNames"
-                class="chip-primary"
-              >
+              <mat-chip *ngFor="let tagName of item(i).torrent.tagNames" class="chip-primary">
                 {{ tagName }}
               </mat-chip>
               <mat-chip *ngIf="item(i).languages; let languages">
@@ -306,20 +195,17 @@
               </mat-chip>
               <mat-chip *ngIf="item(i).video3d?.slice(1) as video3d">{{
                 video3d
-              }}</mat-chip>
-              <mat-chip
-                *ngIf="item(i).videoResolution?.slice(1) as videoResolution"
-                >{{ videoResolution }}</mat-chip
-              >
+                }}</mat-chip>
+              <mat-chip *ngIf="item(i).videoResolution?.slice(1) as videoResolution">{{ videoResolution }}</mat-chip>
               <mat-chip *ngIf="item(i).videoSource as videoSource">{{
                 videoSource
-              }}</mat-chip>
+                }}</mat-chip>
               <mat-chip *ngIf="item(i).videoCodec as videoCodec">{{
                 videoCodec
-              }}</mat-chip>
+                }}</mat-chip>
               <mat-chip *ngIf="item(i).videoModifier as videoModifier">{{
                 videoModifier
-              }}</mat-chip>
+                }}</mat-chip>
             </mat-chip-set>
           </td>
         </ng-container>
@@ -346,76 +232,53 @@
             Magnet
           </th>
           <td mat-cell *matCellDef="let i">
-               <a (click)="addTorrent(item(i).infoHash , contentTypeInfo(item(i).contentType)?.singular)"
-                  style="cursor: pointer;">
-                <mat-icon svgIcon="magnet"></mat-icon >
-               </a>
+            <a href="magnet:?xt=urn:btih:{{ item(i).infoHash }}"><mat-icon svgIcon="magnet"></mat-icon></a>
+            <!-- <a (click)="addTorrent(item(i).infoHash , contentTypeInfo(item(i).contentType)?.singular)"
+              style="cursor: pointer;">
+              <mat-icon svgIcon="magnet"></mat-icon>
+            </a> -->
           </td>
         </ng-container>
 
         <ng-container matColumnDef="expandedDetail">
-          <td
-            mat-cell
-            *matCellDef="let i"
-            [attr.colspan]="displayedColumns.length"
-          >
-            <div
-              class="item-detail"
-              [@detailExpand]="
+          <td mat-cell *matCellDef="let i" [attr.colspan]="displayedColumns.length">
+            <div class="item-detail" [@detailExpand]="
                 expandedItem.id === i.id ? 'expanded' : 'collapsed'
-              "
-            >
-              <img
-                *ngIf="
+              ">
+              <img *ngIf="
                   getAttribute(item(i), 'poster_path', 'tmdb') as posterPath
-                "
-                [src]="'https://image.tmdb.org/t/p/w300/' + posterPath"
-                class="poster"
-              />
-              <img
-                *ngIf="
+                " [src]="'https://image.tmdb.org/t/p/w300/' + posterPath" class="poster" />
+              <img *ngIf="
                   getAttribute(item(i), 'bg', 'tpdb') as posterPath
-                "
-                [src]="posterPath"
-                class="poster"
-                style="max-width:300px;"
-              />
+                " [src]="posterPath" class="poster" style="max-width:300px;" />
               <h2>{{ item(i).torrent.name }}</h2>
               <p>
                 <strong>Info hash:</strong>
-                <span
-                  class="info-hash"
-                  title="Copy to clipboard"
-                  [cdkCopyToClipboard]="item(i).infoHash"
-                  >{{ item(i).infoHash }}</span
-                >
+                <span class="info-hash" title="Copy to clipboard" [cdkCopyToClipboard]="item(i).infoHash">{{
+                  item(i).infoHash }}</span>
               </p>
               <p>
-                <strong>Source:</strong>&nbsp;<span
-                  *ngFor="let s of item(i).torrent.sources; index as j"
-                  >{{ (j > 0 ? ", " : "") + s.name }}</span
-                >
+                <strong>Source:</strong>&nbsp;<span *ngFor="let s of item(i).torrent.sources; index as j">{{ (j > 0 ? ",
+                  " : "") + s.name }}</span>
               </p>
               <p *ngIf="item(i).content">
                 <strong>Title:</strong> {{ item(i).content?.title }}
               </p>
               <p *ngIf="item(i).languages?.length">
-                <strong>Language:</strong>&nbsp;<ng-container
-                  *ngFor="let l of item(i).languages; index as j"
-                >
+                <strong>Language:</strong>&nbsp;<ng-container *ngFor="let l of item(i).languages; index as j">
                   {{
-                    (j > 0 ? ", " : "") +
-                      l.name +
-                      (l.id === item(i).content?.originalLanguage?.id
-                        ? " (original)"
-                        : "")
+                  (j > 0 ? ", " : "") +
+                  l.name +
+                  (l.id === item(i).content?.originalLanguage?.id
+                  ? " (original)"
+                  : "")
                   }}
                 </ng-container>
               </p>
               <p *ngIf="item(i).content?.releaseYear">
                 <strong>Original release date:</strong>
                 {{
-                  item(i).content?.releaseDate ?? item(i).content?.releaseYear
+                item(i).content?.releaseDate ?? item(i).content?.releaseYear
                 }}
               </p>
               <p *ngIf="item(i).episodes">
@@ -442,9 +305,8 @@
               </ng-container>
               <p *ngIf="item(i).content?.voteAverage != null">
                 <strong>Rating:</strong> {{ item(i).content?.voteAverage }} / 10
-                <ng-container *ngIf="item(i).content?.voteCount != null"
-                  >({{ item(i).content?.voteCount }} votes)</ng-container
-                >
+                <ng-container *ngIf="item(i).content?.voteCount != null">({{ item(i).content?.voteCount }}
+                  votes)</ng-container>
               </p>
               <p *ngIf="item(i).content?.externalLinks; let externalLinks">
                 <strong>External links:</strong>&nbsp;
@@ -452,20 +314,15 @@
                   {{ j > 0 ? ", " : ""
                   }}<a [href]="l.url" target="_blank">{{
                     l.metadataSource.name
-                  }}</a>
+                    }}</a>
                 </ng-container>
               </p>
 
               <mat-divider style="clear: both"></mat-divider>
 
-              <mat-tab-group
-                animationDuration="0"
-                [selectedIndex]="expandedItem.selectedTabIndex"
-                (focusChange)="
+              <mat-tab-group animationDuration="0" [selectedIndex]="expandedItem.selectedTabIndex" (focusChange)="
                   expandedItem.selectTab($event.index == 4 ? 0 : $event.index)
-                "
-                [mat-stretch-tabs]="false"
-              >
+                " [mat-stretch-tabs]="false">
                 <mat-tab [aria-labelledby]="'hidden'"></mat-tab>
 
                 <mat-tab>
@@ -474,10 +331,7 @@
                     Files
                   </ng-template>
 
-                  <mat-card
-                    *ngIf="expandedItem.id === i.id"
-                    class="torrent-files"
-                  >
+                  <mat-card *ngIf="expandedItem.id === i.id" class="torrent-files">
                     <p *ngIf="item(i).torrent.filesStatus === 'no_info'">
                       No file information available.
                     </p>
@@ -488,10 +342,8 @@
                     <p *ngIf="item(i).torrent.filesStatus === 'single'">
                       <strong>Single file:</strong> {{ item(i).torrent.name
                       }}<br />
-                      <span *ngIf="item(i).torrent.fileType; let ft"
-                        ><strong>File type: </strong>
-                        {{ ft.charAt(0).toUpperCase() + ft.slice(1) }}<br
-                      /></span>
+                      <span *ngIf="item(i).torrent.fileType; let ft"><strong>File type: </strong>
+                        {{ ft.charAt(0).toUpperCase() + ft.slice(1) }}<br /></span>
                       <strong>File size:</strong>
                       {{ item(i).torrent.size | filesize }}
                     </p>
@@ -510,10 +362,10 @@
                           </td>
                           <td>
                             {{
-                              f.fileType
-                                ? f.fileType.charAt(0).toUpperCase() +
-                                  f.fileType.slice(1)
-                                : "Unknown"
+                            f.fileType
+                            ? f.fileType.charAt(0).toUpperCase() +
+                            f.fileType.slice(1)
+                            : "Unknown"
                             }}
                           </td>
                           <td class="table-torrent-files-td-size">
@@ -534,49 +386,28 @@
                   <mat-card *ngIf="expandedItem.id === i.id">
                     <mat-form-field class="form-edit-tags">
                       <mat-chip-grid #chipGrid aria-label="Enter tags">
-                        <mat-chip-row
-                          *ngFor="
+                        <mat-chip-row *ngFor="
                             let tagName of item(i).torrent.tagNames;
                             let j = index
-                          "
-                          [editable]="true"
-                          (edited)="
+                          " [editable]="true" (edited)="
                             expandedItem.renameTag(tagName, $event.value)
-                          "
-                          (removed)="expandedItem.deleteTag(tagName)"
-                          [aria-description]="'press enter to edit'"
-                        >
+                          " (removed)="expandedItem.deleteTag(tagName)" [aria-description]="'press enter to edit'">
                           {{ tagName }}
-                          <button
-                            matChipRemove
-                            [attr.aria-label]="'remove ' + tagName"
-                          >
+                          <button matChipRemove [attr.aria-label]="'remove ' + tagName">
                             <mat-icon>cancel</mat-icon>
                           </button>
                         </mat-chip-row>
                       </mat-chip-grid>
-                      <input
-                        placeholder="New tag..."
-                        [formControl]="expandedItem.newTagCtrl"
-                        [matAutocomplete]="auto"
-                        [matChipInputFor]="chipGrid"
-                        [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                      <input placeholder="New tag..." [formControl]="expandedItem.newTagCtrl" [matAutocomplete]="auto"
+                        [matChipInputFor]="chipGrid" [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                         (matChipInputTokenEnd)="
                           $event.value && expandedItem.addTag($event.value)
-                        "
-                        [value]="expandedItem.newTagCtrl.value"
-                      />
-                      <mat-autocomplete
-                        #auto="matAutocomplete"
-                        (optionSelected)="
+                        " [value]="expandedItem.newTagCtrl.value" />
+                      <mat-autocomplete #auto="matAutocomplete" (optionSelected)="
                           expandedItem.addTag($event.option.viewValue)
-                        "
-                      >
-                        <mat-option
-                          *ngFor="let tagName of expandedItem.suggestedTags"
-                          [value]="tagName"
-                          >{{ tagName }}</mat-option
-                        >
+                        ">
+                        <mat-option *ngFor="let tagName of expandedItem.suggestedTags" [value]="tagName">{{ tagName
+                          }}</mat-option>
                       </mat-autocomplete>
                     </mat-form-field>
                   </mat-card>
@@ -591,18 +422,12 @@
                   <mat-card *ngIf="expandedItem.id === i.id">
                     <mat-card-content style="margin-top: 10px">
                       <p>
-                        <strong
-                          >Are you sure you want to delete this torrent?</strong
-                        >
+                        <strong>Are you sure you want to delete this torrent?</strong>
                         <br />This action cannot be undone.
                       </p>
                     </mat-card-content>
                     <mat-card-actions class="button-row">
-                      <button
-                        mat-stroked-button
-                        color="warn"
-                        (click)="expandedItem.delete()"
-                      >
+                      <button mat-stroked-button color="warn" (click)="expandedItem.delete()">
                         <mat-icon>delete_forever</mat-icon>Delete
                       </button>
                     </mat-card-actions>
@@ -620,30 +445,16 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr
-          mat-row
-          *matRowDef="let i; columns: displayedColumns"
-          [class]="
+        <tr mat-row *matRowDef="let i; columns: displayedColumns" [class]="
             'summary-row ' +
             (i.id === expandedItem.id ? 'expanded' : 'collapsed')
-          "
-        ></tr>
-        <tr
-          mat-row
-          *matRowDef="let _; columns: ['expandedDetail']"
-          class="expanded-detail-row"
-        ></tr>
+          "></tr>
+        <tr mat-row *matRowDef="let _; columns: ['expandedDetail']" class="expanded-detail-row"></tr>
       </table>
       <span class="spacer"></span>
-      <mat-paginator
-        (page)="handlePageEvent($event)"
-        [pageIndex]="pageIndex"
-        [length]="result.totalCount"
-        [pageSize]="pageSize"
-        [pageSizeOptions]="[10, 25, 50, 100, 250]"
-        [showFirstLastButtons]="true"
-        aria-label="Select page"
-      >
+      <mat-paginator (page)="handlePageEvent($event)" [pageIndex]="pageIndex" [length]="result.totalCount"
+        [pageSize]="pageSize" [pageSizeOptions]="[10, 25, 50, 100, 250]" [showFirstLastButtons]="true"
+        aria-label="Select page">
       </mat-paginator>
     </div>
   </mat-drawer-content>
