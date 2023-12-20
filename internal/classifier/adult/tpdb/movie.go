@@ -2,7 +2,6 @@ package tpdb
 
 import (
 	"context"
-	"fmt"
 	"strconv"
 
 	porndb "git.sr.ht/~dragnel/go-tpdb"
@@ -23,8 +22,7 @@ func (c *client) SearchScene(ctx context.Context, p string) (movie model.Content
 	if err != nil {
 		return model.Content{}, err
 	}
-
-	fmt.Printf("TPDB: found : %s\n", scene.Title)
+	// fmt.Printf("TPDB: found : %s\n", scene.Title)
 	return SceneToXxxModel(scene)
 }
 

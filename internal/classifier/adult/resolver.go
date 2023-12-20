@@ -2,11 +2,12 @@ package adult
 
 import (
 	"context"
+	"strings"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/adult/tpdb"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"go.uber.org/fx"
-	"strings"
 )
 
 type Params struct {

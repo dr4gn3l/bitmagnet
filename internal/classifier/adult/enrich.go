@@ -8,14 +8,14 @@ import (
 )
 
 func PreEnrich(input model.TorrentContent) (model.TorrentContent, error) {
-	if !strings.Contains(strings.ToLower(input.Title), "xxx") {
+	if !strings.Contains(strings.ToLower(input.Torrent.Name), "xxx") {
 		return model.TorrentContent{}, classifier.ErrNoMatch
 	}
 
-	titleLower := strings.ToLower(input.Title)
-	titleLower = strings.Replace(titleLower, "com_", "", 0)
-	titleLower = strings.Replace(titleLower, "www.torrenting.com", "", 0)
-	titleLower = strings.Replace(titleLower, "www.torrenting.org", "", 0)
+	titleLower := strings.ToLower(input.Torrent.Name)
+	titleLower = strings.Replace(titleLower, "com_", "", -1)
+	titleLower = strings.Replace(titleLower, "www.torrenting.com", "", -1)
+	titleLower = strings.Replace(titleLower, "www.torrenting.org", "", -1)
 
 	output := input
 	output.Title = titleLower
