@@ -2,7 +2,6 @@ package adult
 
 import (
 	"context"
-	"strings"
 
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/adult/tpdb"
@@ -45,22 +44,20 @@ func (r adultResolver) PreEnrich(content model.TorrentContent) (model.TorrentCon
 
 func (r adultResolver) Resolve(ctx context.Context, content model.TorrentContent) (model.TorrentContent, error) {
 
-	if strings.Contains(strings.ToLower(content.Title), "xxx") {
-
-		if r.tpdbClient != nil {
-			contentAdult, err := r.tpdbClient.SearchScene(ctx, content.Title)
-			if err == nil {
-				content.Title = contentAdult.Title
-				content.ContentType.Valid = true
-				content.Content = contentAdult
-				content.SearchString = contentAdult.SearchString
-				return content, nil
-			}
-			return model.TorrentContent{}, classifier.ErrNoMatch
+	if r.tpdbClient != nil {
+		contentAdult, err := r.tpdbClient.SearchScene(ctx, content.Title)
+		if err == nil {
+			content.Title = contentAdult.Title
+			content.ContentType.Valid = true
+			content.Content = contentAdult
+			content.SearchString = contentAdult.SearchString
+			return content, nil
 		}
-		content.ContentType.Valid = true
-		content.ContentType.ContentType = model.ContentTypeXxx
-		return content, nil
+		return model.TorrentContent{}, classifier.ErrNoMatch
 	}
+	content.ContentType.Valid = true
+	content.ContentType.ContentType = model.ContentTypeXxx
+	return content, nil
+
 	return model.TorrentContent{}, classifier.ErrNoMatch
 }
