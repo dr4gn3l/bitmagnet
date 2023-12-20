@@ -1,10 +1,12 @@
 package httpserver
 
 import (
-	"github.com/gin-gonic/gin"
-	pyroscope "github.com/grafana/pyroscope-go/godeltaprof/http/pprof"
 	"net/http/pprof"
 	"runtime"
+
+	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver"
+	"github.com/gin-gonic/gin"
+	pyroscope "github.com/grafana/pyroscope-go/godeltaprof/http/pprof"
 )
 
 type pprofBuilder struct{}
@@ -13,7 +15,7 @@ func (pprofBuilder) Key() string {
 	return "pprof"
 }
 
-func (b pprofBuilder) Apply(e *gin.Engine) error {
+func (b pprofBuilder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	runtime.SetMutexProfileFraction(5)
 	runtime.SetBlockProfileRate(5)
 	e.Any("/debug/pprof/", func(c *gin.Context) {

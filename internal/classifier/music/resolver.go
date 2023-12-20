@@ -2,12 +2,12 @@ package music
 
 import (
 	"context"
-	"fmt"
+	"strings"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/classifier/music/discogs"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"go.uber.org/fx"
-	"strings"
 )
 
 type Params struct {
@@ -45,8 +45,6 @@ func (r musicResolver) PreEnrich(content model.TorrentContent) (model.TorrentCon
 func (r musicResolver) Resolve(ctx context.Context, content model.TorrentContent) (model.TorrentContent, error) {
 	titleLower := strings.ToLower(content.Torrent.Name)
 
-	fmt.Printf("Try to resolve : %s\n", titleLower)
-
 	if strings.Contains(titleLower, "discography") ||
 		strings.Contains(titleLower, "discographie") ||
 		strings.Contains(titleLower, "discografia") ||
@@ -54,7 +52,6 @@ func (r musicResolver) Resolve(ctx context.Context, content model.TorrentContent
 
 		artist, err := FindArtistDiscography(titleLower)
 		if err != nil {
-			fmt.Printf("Pas trouvé artist : %s\n", content.Torrent.Name)
 			return content, err
 		}
 
@@ -64,7 +61,6 @@ func (r musicResolver) Resolve(ctx context.Context, content model.TorrentContent
 			Track:                "",
 			LevenshteinThreshold: 0,
 		})
-		fmt.Printf("Discography : %s\n", artist)
 
 		content.ContentType.Valid = true
 		content.ContentType.ContentType = model.ContentTypeMusic
@@ -73,10 +69,8 @@ func (r musicResolver) Resolve(ctx context.Context, content model.TorrentContent
 	} else {
 		for _, ext := range model.FileTypeAudio.Extensions() {
 			if strings.Contains(titleLower, ext) {
-				fmt.Printf("We may hava found musics %s\n", content.Torrent.Name)
 				content.ContentType.Valid = true
 				content.ContentType.ContentType = model.ContentTypeMusic
-
 				return content, nil
 			}
 		}

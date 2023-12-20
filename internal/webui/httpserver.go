@@ -2,14 +2,15 @@ package webui
 
 import (
 	"fmt"
+	"io"
+	"io/fs"
+	"net/http"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver"
 	"github.com/bitmagnet-io/bitmagnet/webui"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"io"
-	"io/fs"
-	"net/http"
 )
 
 type Params struct {
@@ -38,7 +39,7 @@ func (b *builder) Key() string {
 	return "webui"
 }
 
-func (b *builder) Apply(e *gin.Engine) error {
+func (b *builder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	webuiFS := webui.StaticFS()
 	appRoot, appRootErr := fs.Sub(webuiFS, "dist/bitmagnet")
 	if appRootErr != nil {

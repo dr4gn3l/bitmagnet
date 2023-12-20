@@ -4,15 +4,16 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"net"
+	"net/http"
+	"sort"
+	"time"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver/ginzap"
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/worker"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"net"
-	"net/http"
-	"sort"
-	"time"
 )
 
 type Params struct {
@@ -39,7 +40,7 @@ func New(p Params) (r Result, err error) {
 		return
 	}
 	for _, o := range options {
-		if buildErr := o.Apply(g); buildErr != nil {
+		if buildErr := o.Apply(g, p.Config); buildErr != nil {
 			err = buildErr
 			return
 		}
@@ -108,5 +109,5 @@ func resolveOptions(param []string, options []Option) ([]Option, error) {
 
 type Option interface {
 	Key() string
-	Apply(engine *gin.Engine) error
+	Apply(engine *gin.Engine, cfg Config) error
 }

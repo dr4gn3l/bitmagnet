@@ -1,10 +1,13 @@
 package httpserver
 
 type Config struct {
-	LocalAddress string
-	GinMode      string
-	Cors         CorsConfig
-	Options      []string
+	LocalAddress          string
+	UserClientTorrent     string
+	PasswordClientTorrent string
+	HostClientTorrent     string
+	GinMode               string
+	Cors                  CorsConfig
+	Options               []string
 }
 
 type CorsConfig struct {

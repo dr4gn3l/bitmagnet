@@ -41,8 +41,7 @@ import { Facet } from "./facet";
   ],
 })
 export class TorrentContentComponent
-  implements AfterContentInit, AfterViewInit
-{
+  implements AfterContentInit, AfterViewInit {
   dataSource: TorrentContentDataSource = new TorrentContentDataSource(
     this.graphQLService,
     this.errorsService,
@@ -228,14 +227,14 @@ export class TorrentContentComponent
     this.loadResult();
   }
 
-  addTorrent(magnet: string, category: string | undefined ) {
+  addTorrent(magnet: string, category: string | undefined) {
     var uri = ""
     if (category == undefined) {
-      uri = '/add/'+ magnet + '/other'
+      uri = '/add/torrent/' + magnet + '/other'
     } else {
-      uri = '/add/'+ magnet + '/' + category.toLowerCase()
+      uri = '/add/torrent/' + magnet + '/' + category.toLowerCase()
     }
-    fetch(uri );
+    fetch(uri);
   }
 
   /**
@@ -296,9 +295,8 @@ export class TorrentContentComponent
     if (!row) {
       return `${this.isAllSelected() ? "deselect" : "select"} all`;
     }
-    return `${this.selectedItems.isSelected(row) ? "deselect" : "select"} ${
-      row.torrent.name
-    }`;
+    return `${this.selectedItems.isSelected(row) ? "deselect" : "select"} ${row.torrent.name
+      }`;
   }
 
   selectTab(index: number): void {

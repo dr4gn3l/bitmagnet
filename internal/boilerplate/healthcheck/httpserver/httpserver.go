@@ -35,7 +35,7 @@ func (builder) Key() string {
 	return "status"
 }
 
-func (b *builder) Apply(e *gin.Engine) error {
+func (b *builder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	e.GET("/status", b.handler)
 	return nil
 }

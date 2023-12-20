@@ -42,7 +42,7 @@ func (builder) Key() string {
 	return key
 }
 
-func (b builder) Apply(e *gin.Engine) error {
+func (b builder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	handler := asynqmon.New(b.options)
 	e.Any(rootPath+"/*path", func(c *gin.Context) {
 		handler.ServeHTTP(c.Writer, c.Request)

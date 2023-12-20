@@ -1,6 +1,8 @@
 package cors
 
 import (
+	"time"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver"
 	"github.com/gin-gonic/gin"
 	"github.com/rs/cors"
@@ -8,7 +10,6 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
-	"time"
 )
 
 type Params struct {
@@ -52,7 +53,7 @@ func (corsOption) Key() string {
 	return "cors"
 }
 
-func (c corsOption) Apply(g *gin.Engine) error {
+func (c corsOption) Apply(g *gin.Engine, cfg httpserver.Config) error {
 	g.Use(c.handlerFunc)
 	return nil
 }

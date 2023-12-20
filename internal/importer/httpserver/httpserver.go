@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver"
 	"github.com/bitmagnet-io/bitmagnet/internal/importer"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	"strconv"
-	"time"
 )
 
 type Params struct {
@@ -105,7 +106,7 @@ func (builder) Key() string {
 	return "import"
 }
 
-func (b builder) Apply(e *gin.Engine) error {
+func (b builder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	e.POST("/import", b.handler)
 	return nil
 }

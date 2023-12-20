@@ -3,12 +3,13 @@ package httpserver
 import (
 	"errors"
 	"fmt"
+	"strconv"
+
 	"github.com/bitmagnet-io/bitmagnet/internal/boilerplate/httpserver"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"github.com/bitmagnet-io/bitmagnet/internal/torznab"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/fx"
-	"strconv"
 )
 
 type Params struct {
@@ -37,7 +38,7 @@ func (builder) Key() string {
 	return "torznab"
 }
 
-func (b builder) Apply(e *gin.Engine) error {
+func (b builder) Apply(e *gin.Engine, cfg httpserver.Config) error {
 	e.GET("/torznab/*any", func(c *gin.Context) {
 		writeInternalError := func(err error) {
 			_ = c.AbortWithError(500, err)
