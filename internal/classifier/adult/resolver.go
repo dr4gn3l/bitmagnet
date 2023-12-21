@@ -47,11 +47,23 @@ func (r adultResolver) PreEnrich(content model.TorrentContent) (model.TorrentCon
 func (r adultResolver) Resolve(ctx context.Context, content model.TorrentContent) (model.TorrentContent, error) {
 
 	if r.tpdbClient != nil {
-		titleLower := strings.ToLower(content.Torrent.Name)
+		var titleLower string
+		if content.Torrent.Name != "" {
+			if !strings.Contains(strings.ToLower(content.Torrent.Name), "xxx") {
+				return model.TorrentContent{}, classifier.ErrNoMatch
+			}
+			titleLower = strings.ToLower(content.Torrent.Name)
+		} else if content.Title != "" {
+			if !strings.Contains(strings.ToLower(content.Title), "xxx") {
+				return model.TorrentContent{}, classifier.ErrNoMatch
+			}
+			titleLower = strings.ToLower(content.Torrent.Name)
+		}
 		titleLower = clean_name(titleLower)
 		contentAdult, err := r.tpdbClient.SearchScene(ctx, titleLower)
 		fmt.Printf("tpdb check %s\n", titleLower)
 		if err == nil {
+			fmt.Printf("tpdb found %s\n", titleLower)
 			content.Title = contentAdult.Title
 			content.ContentType.Valid = true
 			content.Content = contentAdult
@@ -64,5 +76,4 @@ func (r adultResolver) Resolve(ctx context.Context, content model.TorrentContent
 	content.ContentType.ContentType = model.ContentTypeXxx
 	return content, nil
 
-	return model.TorrentContent{}, classifier.ErrNoMatch
 }

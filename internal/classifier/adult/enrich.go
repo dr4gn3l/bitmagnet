@@ -9,11 +9,19 @@ import (
 )
 
 func PreEnrich(input model.TorrentContent) (model.TorrentContent, error) {
-	if !strings.Contains(strings.ToLower(input.Torrent.Name), "xxx") {
-		return model.TorrentContent{}, classifier.ErrNoMatch
+	var titleLower string
+	if input.Torrent.Name != "" {
+		if !strings.Contains(strings.ToLower(input.Torrent.Name), "xxx") {
+			return model.TorrentContent{}, classifier.ErrNoMatch
+		}
+		titleLower = strings.ToLower(input.Torrent.Name)
+	} else if input.Title != "" {
+		if !strings.Contains(strings.ToLower(input.Title), "xxx") {
+			return model.TorrentContent{}, classifier.ErrNoMatch
+		}
+		titleLower = strings.ToLower(input.Torrent.Name)
 	}
 
-	titleLower := strings.ToLower(input.Torrent.Name)
 	titleLower = clean_name(titleLower)
 
 	output := input
