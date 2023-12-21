@@ -57,11 +57,11 @@ func (r adultResolver) Resolve(ctx context.Context, content model.TorrentContent
 			if !strings.Contains(strings.ToLower(content.Title), "xxx") {
 				return model.TorrentContent{}, classifier.ErrNoMatch
 			}
-			titleLower = strings.ToLower(content.Torrent.Name)
+			titleLower = strings.ToLower(content.Title)
 		}
-		titleLower = clean_name(titleLower)
-		contentAdult, err := r.tpdbClient.SearchScene(ctx, titleLower)
+
 		fmt.Printf("tpdb check %s\n", titleLower)
+		contentAdult, err := r.tpdbClient.SearchScene(ctx, titleLower)
 		if err == nil {
 			fmt.Printf("tpdb found %s\n", titleLower)
 			content.Title = contentAdult.Title

@@ -4,25 +4,16 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/bitmagnet-io/bitmagnet/internal/classifier"
 	"github.com/bitmagnet-io/bitmagnet/internal/model"
 )
 
 func PreEnrich(input model.TorrentContent) (model.TorrentContent, error) {
 	var titleLower string
 	if input.Torrent.Name != "" {
-		if !strings.Contains(strings.ToLower(input.Torrent.Name), "xxx") {
-			return model.TorrentContent{}, classifier.ErrNoMatch
-		}
 		titleLower = strings.ToLower(input.Torrent.Name)
 	} else if input.Title != "" {
-		if !strings.Contains(strings.ToLower(input.Title), "xxx") {
-			return model.TorrentContent{}, classifier.ErrNoMatch
-		}
 		titleLower = strings.ToLower(input.Torrent.Name)
 	}
-
-	titleLower = clean_name(titleLower)
 
 	output := input
 	output.Title = titleLower
