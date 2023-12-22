@@ -3,8 +3,9 @@ package classifier
 import (
 	"context"
 	"errors"
-	"github.com/bitmagnet-io/bitmagnet/internal/model"
 	"sort"
+
+	"github.com/bitmagnet-io/bitmagnet/internal/model"
 )
 
 // This is where the subresolvers are called sorted by priority
@@ -14,6 +15,7 @@ func (r resolver) Resolve(ctx context.Context, content model.TorrentContent) (mo
 	for _, subResolver := range r.sortedSubResolvers() {
 		preEnrichedContent, preEnrichedErr := subResolver.PreEnrich(content)
 		if preEnrichedErr != nil {
+			continue
 			return model.TorrentContent{}, preEnrichedErr
 		}
 		resolvedContent, resolveErr := subResolver.Resolve(ctx, preEnrichedContent)
